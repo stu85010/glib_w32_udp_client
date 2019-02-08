@@ -1,12 +1,18 @@
+#ifdef _MSC_VER
 #include <windows.h>
+#endif
 
 #include <string>
 #include <vector>
 #include <iostream>
 
+#ifdef _MSC_VER
 #include <glib.h>
 #include <gio/gio.h>
-
+#else
+#include <glib.h>
+#include <gio/gio.h>
+#endif
 
 using namespace std;
 
@@ -14,6 +20,7 @@ using namespace std;
 
 int task_should_exit = 0;
 
+#ifdef _MSC_VER
 // https://stackoverflow.com/questions/18291284/handle-ctrlc-on-win32
 BOOL WINAPI consoleHandler(DWORD dwCtrlType)
 {
@@ -37,14 +44,16 @@ BOOL WINAPI consoleHandler(DWORD dwCtrlType)
 
 	return FALSE;
 }
+#endif
 
-int main(std::vector<std::string> args)
+int main(int argc, char* argv[])
 {
 	std::cout << "This is UDP socket sender!!" << std::endl;
 
 	gchar *buffer = "Hi, this is sender.";
 	int transfer_len = 0;
 	GInetAddress *address = g_inet_address_new_from_string("127.0.0.1");
+	//GInetAddress *address = g_inet_address_new_from_string("192.168.0.255");
 	GSocketAddress *socket_address = g_inet_socket_address_new(address, LISTEN_PORT);
 	GError *error = NULL;
 
@@ -63,10 +72,12 @@ int main(std::vector<std::string> args)
 		g_message("Socket creation ok");
 	}
 
+#ifdef _MSC_VER
 	if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
 		printf("\nERROR: Could not set control handler");
 		return 1;
 	}
+#endif
 
 	transfer_len = g_socket_send_to(socket, socket_address, buffer, strlen(buffer) + 1, NULL, &error);
 
