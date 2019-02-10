@@ -52,8 +52,9 @@ int main(int argc, char* argv[])
 
 	gchar *buffer = "Hi, this is sender.";
 	int transfer_len = 0;
-	GInetAddress *address = g_inet_address_new_from_string("127.0.0.1");
-	//GInetAddress *address = g_inet_address_new_from_string("192.168.0.255");
+	//GInetAddress *address = g_inet_address_new_from_string("127.0.0.1");
+	//GInetAddress *address = g_inet_address_new_from_string("127.255.255.255");
+	GInetAddress *address = g_inet_address_new_from_string("192.168.3.255");
 	GSocketAddress *socket_address = g_inet_socket_address_new(address, LISTEN_PORT);
 	GError *error = NULL;
 
@@ -78,6 +79,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 #endif
+	g_socket_set_broadcast(socket, TRUE);
 
 	transfer_len = g_socket_send_to(socket, socket_address, buffer, strlen(buffer) + 1, NULL, &error);
 
